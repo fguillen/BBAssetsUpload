@@ -17,6 +17,16 @@ _BBAssetsUpload_ will deal with your server JSON API to:
 * remove files
 * reorder files
 
+## Advantages
+
+There are very [powerfull jQuery file uploads](http://blueimp.github.com/jQuery-File-Upload/) out there but for one reason or another they were very complicated to me to understand and to customize to my own purposes.
+
+So I decided to implement my own one based on [BackboneJS](http://backbonejs.org/) and completely agnostic about _templating_ and styling with _CSS_.
+
+As you can see in the [demo page](http://fguillen.github.com/BBAssetsUpload) the integration is very straight forward and the styling is completely up to you.
+
+In the other hand this version is not properly tested, and only works in _modern_ browsers, so use it under your own responsability.
+
 ## Version
 
 * 0.0.1 (but already in production applications)
