@@ -8,9 +8,9 @@ Check the [demo page](http://fguillen.github.com/BBAssetsUpload)
 
 Just drop multiple files from your local folder to the _drop area_ and the uploading will start inmediately.
 
-BBAssetsUpload also provides a _drag and drop_ reordering functionality.
+_BBAssetsUpload_ also provides a _drag and drop_ reordering functionality.
 
-BBAssetsUpload will deal with your server JSON API to:
+_BBAssetsUpload_ will deal with your server JSON API to:
 
 * fetch already existing files
 * upload new files
@@ -56,7 +56,7 @@ BBAssetsUpload will deal with your server JSON API to:
 
 ## Server JSON API
 
-BBAssetsUpload relieves in a JSON API like this:
+_BBAssetsUpload_ relieves in a JSON API like this:
 
 * (POST) **master URL**: create one or multiple images, return the list of new images
 * (GET) **master URL**: return the list of images

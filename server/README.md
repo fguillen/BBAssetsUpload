@@ -1,6 +1,6 @@
 # BBAssetsUpload API JSON Server
 
-This is a very simple server just to try the functionalities of the JS Plugin BBAssetsUpload
+This is a very simple server just to check the functionalities of the JS Plugin [BBAssetsUpload](https://github.com/fguillen/BBAssetsUpload)
 
 ## Install & Play
 
