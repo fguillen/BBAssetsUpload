@@ -100,6 +100,11 @@ Tested in:
 ##### 6. You are ready!
 
 
+## Install the test Server JSON API
+
+You can install the example server following [this instructions](https://github.com/fguillen/BBAssetsUpload/blob/master/server/README.md)
+
+
 ## TODO
 
 * check in more browsers
@@ -108,6 +113,12 @@ Tested in:
 * Explain server can not work
 * Processing messages doesn't work in files example
 * Support same file name
+
+## Attributions
+
+Part of the most critical code is _inspired_ in the work of [Alex MacCaw](http://alexmaccaw.co.uk) who has offered it as MIT license.
+
+This file for example: [jquery.upload.js](https://github.com/fguillen/BBAssetsUpload/blob/master/vendor/jquery.upload.js)
 
 
 ## License
