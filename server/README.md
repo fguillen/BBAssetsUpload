@@ -13,3 +13,5 @@ This is a very simple server just to try the functionalities of the JS Plugin BB
     # (maybe you have to move to another console)
     cd ..                                                                         # Go back to the root directory
     open index.html                                                               # Open the demo page
+
+
