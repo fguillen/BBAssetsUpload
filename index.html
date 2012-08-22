@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="BBAssetsUpload is JS plugin to transform an input field in an auto-search element based on Backbone." />
+  <meta name="keywords" content="Backbone, jQuery, plugin, auto-search, auto-complete" />
+  <meta name="author" content="http://fernandoguillen.info" />
+
+  <title>BBAssetsUpload</title>
+
+  <!-- demo page styles -->
+  <link rel="stylesheet" href="./reset.css" ></style>
+  <link rel="stylesheet" href="./style.css" ></style>
+
+
+  <!-- dependencies -->
+  <script src="./vendor/jquery.js" type="text/javascript" charset="utf-8"></script>
+  <script src="./vendor/underscore.js" type="text/javascript" charset="utf-8"></script>
+  <script src="./vendor/backbone.js" type="text/javascript" charset="utf-8"></script>
+  <script src="./vendor/jquery.ui.js" type="text/javascript" charset="utf-8"></script>
+  <script src="./vendor/jquery.upload.js" type="text/javascript" charset="utf-8"></script>
+
+  <!-- lib -->
+  <script src="./lib/bbassetsupload.js" type="text/javascript" charset="utf-8"></script>
+
+  <!-- plugins -->
+  <!--script src="https://raw.github.com/gist/3182810/95fbc0af043412d5083be2669b7cd5d0c771f9ee/ajax_events.js" type="text/javascript" charset="utf-8"></script-->
+
+  <!-- syntax highlighting -->
+  <link href="./assets/rainbow/themes/github.css" rel="stylesheet" type="text/css">
+  <script src="./assets/rainbow/js/rainbow.min.js"></script>
+  <script src="./assets/rainbow/js/language/generic.js"></script>
+  <script src="./assets/rainbow/js/language/javascript.js"></script>
+  <script src="./assets/rainbow/js/language/html.js"></script>
+
+  <style>
+    /* for Example 1 */
+
+    #example-1 .images > ul > li {
+      float: left;
+    }
+
+    #example-1 {
+      clear: both;
+    }
+
+
+    #example-1 .drop-wrapper,
+    #example-1 .placeholder,
+    #example-1 .item {
+      width: 200px;
+      height: 100px;
+      position: relative;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    #example-1 .placeholder{
+      box-sizing: border-box;
+      border: 3px dashed #ccc;
+      float: left;
+    }
+
+    #example-1 .drop-wrapper {
+      float: left;
+    }
+
+    #example-1 .drop-wrapper .drop {
+      position: absolute;
+      top: 0;
+      lef: 0;
+      box-sizing: border-box;
+      width: 200px;
+      height: 100px;
+      border: 4px dashed #ccc;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      z-index: 100;
+    }
+
+    #example-1 .drop-wrapper .drop-message {
+      position: absolute;
+      top: 0;
+      lef: 0;
+      box-sizing: border-box;
+      width: 200px;
+      height: 100px;
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #example-1 .drop.bbimagesupload-over {
+      border-color: black;
+    }
+
+    #example-1 .item .image{
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      width: 200px;
+      height: 100px;
+      top: 0;
+      left: 0;
+    }
+
+    #example-1 .item .state {
+      box-sizing: border-box;
+      width: 200px;
+      height: 25px;
+      background-color: black;
+      position: absolute;
+      bottom: 0;
+      text-align: center;
+      color: white;
+      font-size: 14px;
+      padding-top: 5px;
+    }
+
+    #example-1 .item .progress {
+      width: 200px;
+      height: 16px;
+      background-color: transparent;
+      position: absolute;
+      bottom: 0;
+    }
+
+    #example-1 .item .progress .progress-bar {
+      background: transparent url("./assets/loading.gif") repeat left center;
+      height: 16px;
+      width: 100px;
+    }
+
+    #example-1 .item.uploading .state {
+      display: none;
+    }
+
+    #example-1 .item:not(.uploading) .progress {
+      display: none;
+    }
+
+    #example-1 .item:not(.uploading) .state {
+      display: block;
+    }
+    #example-1 .item .controls {
+      display: none;
+      width: 17px;
+      height: 17px;
+      padding: 3px;
+      border: 2px solid black;
+      border-radius: 8px;
+      background-color: white;
+      font-family: sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+      position: absolute;
+      right: -7px;
+      top: -7px;
+    }
+
+    #example-1 .item:hover .controls {
+      display: block;
+    }
+
+    #example-1 .item .controls img {
+      width: 16px;
+    }
+
+    #example-1 .item .controls a {
+      color: white;
+      text-decoration: none;
+    }
+  </style>
+
+  <style>
+    /* for Example 2 */
+
+    #example-2 .files > ul > li {
+      box-sizing: border-box;
+      overflow: hidden;
+      border-bottom: 1px solid #ccc;
+      width: 100%;
+      height: 40px;
+    }
+
+    #example-2 .item {
+      padding: 10px;
+    }
+
+    #example-2 .placeholder {
+      width: 100%;
+      height: 40px;
+      background-color: #ccc;
+    }
+
+    #example-2 .files > ul > li:last-child {
+      border-bottom: 0;
+    }
+
+    #example-2.drop{
+      min-height: 100px;
+      width: 100%;
+      border: 4px dashed #ccc;
+    }
+
+    #example-2 .header{
+      float: left;
+    }
+
+    #example-2 .header .name,
+    #example-2 .header .name a {
+      color: black;
+      font-size: 20px;
+      text-decoration: none;
+    }
+
+
+    #example-2 .header .controls {
+      margin-left: 20px;
+    }
+
+    #example-2 .header .controls a {
+      font-size: 14px;
+      color: #aaa;
+      text-decoration: none;
+    }
+
+    #example-2 .header .controls img {
+      width: 12px;
+    }
+
+    #example-2 .header a:hover {
+      text-decoration: underline;
+    }
+
+    #example-2 .progress,
+    #example-2 .state {
+      font-size: 14px;
+      float: right;
+    }
+
+    #example-2 .state{
+      display: none;
+    }
+
+    #example-1 .item:not(.uploading) .progress {
+      display: none;
+    }
+
+    #example-1 .item:not(.uploading) .state {
+      display: block;
+    }
+
+
+    #example-2 .progress span{
+      font-size: 18px;
+      font-weight: bold;
+      width: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>BBAssetsUpload</h1>
+    <h2>BBAssetsUpload is a JS plugin to allow <strong>drag and drop</strong> for multiple ajax assets uploading. It is based in <strong>BackboneJS</strong></h2>
+    <p>
+      <ul>
+        <li><a href="https://github.com/fguillen/BBAssetsUpload">BBAssetsUpload's code</a></li>
+        <li><a href="http://fguillen.github.com/BBAssetsUpload">BBAssetsUpload's demo page</a></li>
+        <li><a href="https://github.com/fguillen/BBAssetsUpload/blob/master/README.md">BBAssetsUpload's README</a></li>
+      </ul>
+    </p>
+    <p><strong>Demo page</strong>: play with the examples</p>
+
+    <h3>Use</h3>
+<pre><code data-language="javascript">
+new BBAssetsUpload({
+  // (Required) The master URL for all the requests
+  url: "http://wadus.com/assets/images",
+
+  // (Required) reference to the DOM element where the file templates will be added
+  listElement: $("#example-1 .images"),
+
+  // (Required) reference to the DOM element where to drop files
+  dropElement: $("#example-1 .drop"),
+
+  // (Required) UnderscoreJS style template for files that are already uploaded
+  assetTemplate: $("#template-file").html(),
+
+  // (Required) UnderscoreJS style template for files that are beeing uploaded
+  assetUploadingTemplate: $("#template-file-uploading").html(),
+
+  // maximum file size in KB
+  maxFileSize: 500,
+
+  // list of accepted file extensions
+  acceptFileTypes: "jpg, jpeg, png"
+});
+</code></pre>
+
+    <section>
+      <h1>Example 1</h1>
+      <p>
+        Drag images from your a local folder and drop them in the drop box.
+        File types are limited to <strong>jpg, jpeg, png</strong> and file size is
+        limited to <strong>500KB</strong> by configuration.
+      </p>
+
+<h2>Code <a href="#show-code" onclick="$('#code-example-1').toggle('fast'); return false;">toggle</a></h2>
+      <div id="code-example-1" class="code">
+<pre><code data-language="javascript">
+new BBAssetsUpload({
+  url: "http://bbassetsupload.herokuapp.com/assets/images",
+  listElement: $("#example-1 .images"),
+  dropElement: $("#example-1 .drop"),
+  assetTemplate: $("#template-image").html(),
+  assetUploadingTemplate: $("#template-image-uploading").html(),
+  maxFileSize: 500,
+  acceptFileTypes: "jpg, jpeg, png"
+});
+</code></pre>
+      </div>
+      <br />
+
+      <div id="example-1" class="example">
+        <div class="images"></div>
+        <div class="drop-wrapper">
+          <div class="drop"></div>
+          <div class="drop-message">Drop image files here</div>
+        </div>
+      </div>
+
+      <script>
+        $(function(){
+          new BBAssetsUpload({
+            url: "http://bbassetsupload.herokuapp.com/assets/images",
+            listElement: $("#example-1 .images"),
+            dropElement: $("#example-1 .drop"),
+            assetTemplate: $("#template-image").html(),
+            assetUploadingTemplate: $("#template-image-uploading").html(),
+            maxFileSize: 500,
+            acceptFileTypes: "jpg, jpeg, png"
+          });
+        });
+      </script>
+
+      <script type="text/template" id="template-image">
+        <div class="item <%= state %>">
+          <div class="image" style="background-image: url( '<%= url %>' )"></div>
+          <div class="controls">
+            <a href="#delete" class="delete"><img src="./assets/delete.png" /></a>
+          </div>
+        </div>
+      </script>
+
+      <script type="text/template" id="template-image-uploading">
+        <div class="item <%= state %>">
+          <div class="image" style="background-image: url( '<%= file_url %>' )"></div>
+          <div class="progress"><div class="progress-bar" style="width:<%= progress %>%"></div></div>
+          <div class="state"><%= state %></div>
+        </div>
+      </script>
+
+    </section>
+
+    <div class="clear"></div>
+
+    <section>
+      <h1>Example 2</h1>
+      <p>
+        Drop any kind of files to the <strong>drop area</strong>.
+        File size is limited to <strong>500KB</strong> by configuration.
+      </p>
+
+<h2>Code <a href="#show-code" onclick="$('#code-example-2').toggle('fast'); return false;">toggle</a></h2>
+      <div id="code-example-2" class="code">
+<pre><code data-language="javascript">
+new BBAssetsUpload({
+  url: "http://bbassetsupload.herokuapp.com/assets/files",
+  listElement: $("#example-2 .files"),
+  dropElement: $("#example-2"),
+  assetTemplate: $("#template-file").html(),
+  assetUploadingTemplate: $("#template-file-uploading").html(),
+  maxFileSize: 500
+});
+</code></pre>
+      </div>
+      <br />
+
+      <div id="example-2" class="example drop">
+        <div class="files"></div>
+      </div>
+
+      <script>
+        $(function(){
+          new BBAssetsUpload({
+            url: "http://bbassetsupload.herokuapp.com/assets/files",
+            listElement: $("#example-2 .files"),
+            dropElement: $("#example-2"),
+            assetTemplate: $("#template-file").html(),
+            assetUploadingTemplate: $("#template-file-uploading").html(),
+            maxFileSize: 500
+          });
+        });
+      </script>
+
+      <script type="text/template" id="template-file">
+        <div class="item <%= state %>">
+          <div class="header">
+            <span class="name"><a href="<%= url %>"><%= name %></a></span>
+            <span class="controls">
+              <a href="#delete" class="delete"><img src="./assets/delete.png" /> delete</a>
+            </span>
+          </div>
+        </div>
+      </script>
+
+      <script type="text/template" id="template-file-uploading">
+        <div class="item <%= state %>">
+          <div class="header">
+            <span class="name"><%= name %></span>
+          </div>
+          <div class="progress">Uploading <span><%= progress %>%</span></div>
+          <div class="state"><%= state %></div>
+        </div>
+      </script>
+
+    <div class="clear"></div>
+
+    <footer>
+      <p>
+        <a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a>
+        <br />
+        <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">BBAssetsUpload Backbone/JS plugin</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://fernandoguillen.info" property="cc:attributionName" rel="cc:attributionURL">Fernando Guillen</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.
+      </p>
+    </footer>
+  </div>
+
+  <!-- google analytics -->
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-3468219-1']);
+    _gaq.push(['_setDomainName', 'fernandoguillen.info']);
+    _gaq.push(['_setAllowLinker', true]);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+  <!-- google analytics -->
+</body>
+</html>
+
