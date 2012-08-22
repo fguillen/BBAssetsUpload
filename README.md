@@ -58,10 +58,10 @@ BBAssetsUpload will deal with your server JSON API to:
 
 BBAssetsUpload relieves in a JSON API like this:
 
-* (POST) <master URL>: create one or multiple images, return the list of new images
-* (GET) <master URL>: return the list of images
-* (POST) <master URL>/reorder: create a new order for the images
-* (DELETE) <master URL>: delete an image
+* (POST) **master URL**: create one or multiple images, return the list of new images
+* (GET) **master URL**: return the list of images
+* (POST) **master URL**/reorder: create a new order for the images
+* (DELETE) **master URL**: delete an image
 
 ## Browsers support
 
