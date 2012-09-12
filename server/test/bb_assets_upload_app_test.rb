@@ -123,4 +123,8 @@ class BBAssetsUploadAppTest < Test::Unit::TestCase
 
     assert_equal( 0, BBAssetsUploadApp.class_variable_get(:@@assets).length )
   end
+
+  def test_database_size
+    puts app.call( "database_size" )
+  end
 end
