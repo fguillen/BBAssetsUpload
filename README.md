@@ -61,7 +61,19 @@ In the other hand this version is not properly tested, and only works in _modern
       maxFileSize: 500,
 
       // list of accepted file extensions
-      acceptFileTypes: "jpg, jpeg, png"
+      acceptFileTypes: "jpg, jpeg, png",
+
+      // on start uploading callback
+      onStart: function( asset ) {},
+
+      // on progress uploading callback
+      onProgress: function( asset ) {},
+
+      // on success uploading callback
+      onSuccess: function( asset ) {},
+
+      // on error uploading callback
+      onError: function( asset ) {}
     });
 
 ## Server JSON API

@@ -299,7 +299,19 @@ new BBAssetsUpload({
   maxFileSize: 500,
 
   // list of accepted file extensions
-  acceptFileTypes: "jpg, jpeg, png"
+  acceptFileTypes: "jpg, jpeg, png",
+
+  // on start uploading callback
+  onStart: function( asset ) {},
+
+  // on progress uploading callback
+  onProgress: function( asset ) {},
+
+  // on success uploading callback
+  onSuccess: function( asset ) {},
+
+  // on error uploading callback
+  onError: function( asset ) {}
 });
 </code></pre>
 
@@ -386,7 +398,11 @@ new BBAssetsUpload({
   dropElement: $("#example-2"),
   assetTemplate: $("#template-file").html(),
   assetUploadingTemplate: $("#template-file-uploading").html(),
-  maxFileSize: 500
+  maxFileSize: 500,
+  onStart: function( asset ) { console.log( "starting upload", asset.get( "file" ).name ); },
+  onProgress: function( asset ) { console.log( "progress upload", asset.get( "progress" ) ); },
+  onSuccess: function( asset ) { console.log( "success upload", asset.get( "file" ).name ); },
+  onError: function( asset ) { console.log( "error upload", asset.get( "file" ).name ); }
 });
 </code></pre>
       </div>
@@ -404,7 +420,11 @@ new BBAssetsUpload({
             dropElement: $("#example-2"),
             assetTemplate: $("#template-file").html(),
             assetUploadingTemplate: $("#template-file-uploading").html(),
-            maxFileSize: 500
+            maxFileSize: 500,
+            onStart: function( asset ) { console.log( "starting upload", asset.get( "file" ).name ); },
+            onProgress: function( asset ) { console.log( "progress upload", asset.get( "progress" ) ); },
+            onSuccess: function( asset ) { console.log( "success upload", asset.get( "file" ).name ); },
+            onError: function( asset ) { console.log( "error upload", asset.get( "file" ).name ); }
           });
         });
       </script>
