@@ -29,7 +29,7 @@ In the other hand this version is not properly tested, and only works in _modern
 
 ## Version
 
-* 0.0.1 (but already in production applications)
+* 0.0.3 (but already in production applications)
 
 ## Usage
 
