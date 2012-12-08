@@ -85,6 +85,13 @@ _BBAssetsUpload_ relieves in a JSON API like this:
 * (POST) **master URL**/reorder: create a new order for the images
 * (DELETE) **master URL**: delete an image
 
+### Response format
+
+In the server response is important to remember to:
+
+* Response in a JSON format
+* Response always the **id** of the Image
+
 ## Browsers support
 
 Tested in:
