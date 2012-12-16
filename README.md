@@ -128,7 +128,6 @@ In the server response is important to remember to:
       end
     end
 
-
 ## Browsers support
 
 Tested in:
