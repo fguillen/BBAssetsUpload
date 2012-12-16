@@ -57,6 +57,9 @@ In the other hand this version is not properly tested, and only works in _modern
     new BBAssetsUpload({
       // ... besides de Basic configuration
 
+      // deactivate ordering, default is 'true'
+      listSortable: false,
+
       // maximum file size in KB
       maxFileSize: 500,
 
