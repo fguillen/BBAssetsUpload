@@ -1,14 +1,14 @@
 // Code modified from: https://github.com/maccman/holla/blob/master/app/javascripts/lib/jquery.upload.js
 // License: MIT
 
-(function($){
+(($ => {
 
-  $.ajaxTransport("+*", function(s){
+  $.ajaxTransport("+*", s => {
     var xhr;
 
     if (s.useXHR2)
       return {
-        send: function(headers, complete){
+        send(headers, complete) {
           xhr = s.xhr();
           xhr.open( s.type, s.url, s.async );
 
@@ -20,7 +20,7 @@
            xhr.setRequestHeader( i, headers[ i ] );
           }
 
-          var callback = function(e){
+          var callback = e => {
             var responses = {xml: xhr.responseXML, text: xhr.responseText};
             complete( xhr.status, xhr.statusText, responses, xhr.getAllResponseHeaders() );
           };
@@ -38,7 +38,7 @@
           xhr.send(s.data);
         },
 
-        abort: function(){
+        abort() {
           if (xhr) xhr.abort();
         }
     };
@@ -53,7 +53,7 @@
     upload:      {}
   };
 
-  $.upload = function(url, data, settings){
+  $.upload = (url, data, settings) => {
     var fd = new FormData;
 
     if ( data instanceof File )
@@ -74,4 +74,4 @@
     return $.ajax(settings);
   };
 
-})(jQuery);
+}))(jQuery);

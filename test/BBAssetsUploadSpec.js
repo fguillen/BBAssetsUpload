@@ -1,5 +1,5 @@
-$(function(){
-  describe( "BBAssetsUpload", function(){
+$(() => {
+  describe( "BBAssetsUpload", () => {
     beforeEach( function(){
       this.options = {
         url: "http://wadus.com/assets",
@@ -25,31 +25,31 @@ $(function(){
       }, this ) );
     });
 
-    describe( "BBAssetsUpload.Backbone.Asset", function(){
-      it( "should be initialized with state completed by default", function(){
+    describe( "BBAssetsUpload.Backbone.Asset", () => {
+      it( "should be initialized with state completed by default", () => {
         var asset = new BBAssetsUpload.Backbone.Asset();
         expect( asset.get( "state" ) ).toEqual( "completed" );
       });
 
-      it( "should override state if in options", function(){
+      it( "should override state if in options", () => {
         var asset = new BBAssetsUpload.Backbone.Asset({ state: "wadus" });
         expect( asset.get( "state" ) ).toEqual( "wadus" );
       });
 
-      it( "should update progress", function(){
+      it( "should update progress", () => {
         var asset = new BBAssetsUpload.Backbone.Asset();
         asset.onProgress({ position: 50, total: 200 })
         expect( asset.get( "progress" ) ).toEqual( 25 );
       });
 
-      it( "on progress 100 should change state to processing", function(){
+      it( "on progress 100 should change state to processing", () => {
         var asset = new BBAssetsUpload.Backbone.Asset();
         asset.onProgress({ position: 200, total: 200 })
         expect( asset.get( "progress" ) ).toEqual( 100 );
         expect( asset.get( "state" ) ).toEqual( "processing" );
       });
 
-      it( "should update all in onSuccess", function(){
+      it( "should update all in onSuccess", () => {
         var asset = new BBAssetsUpload.Backbone.Asset({ state: "wadus" });
         asset.set("file", { name: "file_name" });
         asset.onSuccess({ field1: "value1", field2: "value2" })
@@ -58,7 +58,7 @@ $(function(){
       });
     });
 
-    describe( "Initialization", function(){
+    describe( "Initialization", () => {
       beforeEach( function(){
         this.bbAssetsUpload = new BBAssetsUpload( this.options );
       });
@@ -76,21 +76,21 @@ $(function(){
         expect( this.bbAssetsUpload.assetUploadingTemplate ).toEqual( this.options.assetUploadingTemplate );
       });
 
-      it( "on start should fetch the files", function(){
+      it( "on start should fetch the files", () => {
         expect( $("#section-1 ul." + BBAssetsUpload.Constants.assetListClass ).length ).toEqual( 1 )
         expect( $("#section-1 ul." + BBAssetsUpload.Constants.assetListClass + " li." + BBAssetsUpload.Constants.assetElementClass ).length ).toEqual( 2 )
         expect( $("#section-1 ul." + BBAssetsUpload.Constants.assetListClass + " li." + BBAssetsUpload.Constants.assetElementClass ).html() ).toEqual( "name 1, url 1" )
       });
     });
 
-    describe( "Initialization Errors", function(){
-      it( "should exit if some required attribute missing", function(){
+    describe( "Initialization Errors", () => {
+      it( "should exit if some required attribute missing", () => {
         var error_options = {}
         error_message = "5 errors found in options, 'url' required, 'listElement' required, 'dropElement' required, 'assetTemplate' required, 'assetUploadingTemplate' required"
-        expect( function() { new BBAssetsUpload( error_options ) } ).toThrow( error_message );
+        expect( () => { new BBAssetsUpload( error_options ) } ).toThrow( error_message );
       });
 
-      it( "should exit if some CSS elements not found", function(){
+      it( "should exit if some CSS elements not found", () => {
         var error_options = {
           url: "the_url",
           listElement: $("#not-exists listElement"),
@@ -99,11 +99,11 @@ $(function(){
           assetUploadingTemplate: $("#not-exists assetUploadingTemplate").html()
         };
         error_message = "4 errors found in options, 'assetTemplate' required, 'assetUploadingTemplate' required, 'listElement' element not found with selector '#not-exists listElement', 'dropElement' element not found with selector '#not-exists dropElement'"
-        expect( function() { new BBAssetsUpload( error_options ) } ).toThrow( error_message );
+        expect( () => { new BBAssetsUpload( error_options ) } ).toThrow( error_message );
       });
     });
 
-    describe( "Events", function(){
+    describe( "Events", () => {
       beforeEach( function(){
         this.startCallback = jasmine.createSpy( "startCallback" );
         this.progressCallback = jasmine.createSpy( "progressCallback" );
@@ -156,7 +156,7 @@ $(function(){
       });
     });
 
-    describe( "UI", function(){
+    describe( "UI", () => {
       beforeEach( function(){
         this.files = [
           {

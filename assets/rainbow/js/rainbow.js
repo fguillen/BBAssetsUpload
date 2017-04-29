@@ -18,75 +18,74 @@
  * @preserve @version 1.1.8
  * @url rainbowco.de
  */
-window['Rainbow'] = (function() {
-
+window['Rainbow'] = ((() => {
     /**
      * array of replacements to process at the end
      *
      * @type {Object}
      */
-    var replacements = {},
+    var replacements = {};
 
-        /**
-         * an array of start and end positions of blocks to be replaced
-         *
-         * @type {Object}
-         */
-        replacement_positions = {},
+    var /**
+     * an array of start and end positions of blocks to be replaced
+     *
+     * @type {Object}
+     */
+    replacement_positions = {};
 
-        /**
-         * an array of the language patterns specified for each language
-         *
-         * @type {Object}
-         */
-        language_patterns = {},
+    var /**
+     * an array of the language patterns specified for each language
+     *
+     * @type {Object}
+     */
+    language_patterns = {};
 
-        /**
-         * an array of languages and whether they should bypass the default patterns
-         *
-         * @type {Object}
-         */
-        bypass_defaults = {},
+    var /**
+     * an array of languages and whether they should bypass the default patterns
+     *
+     * @type {Object}
+     */
+    bypass_defaults = {};
 
-        /**
-         * processing level
-         *
-         * replacements are stored at this level so if there is a sub block of code
-         * (for example php inside of html) it runs at a different level
-         *
-         * @type {number}
-         */
-        CURRENT_LEVEL = 0,
+    var /**
+     * processing level
+     *
+     * replacements are stored at this level so if there is a sub block of code
+     * (for example php inside of html) it runs at a different level
+     *
+     * @type {number}
+     */
+    CURRENT_LEVEL = 0;
 
-        /**
-         * constant used to refer to the default language
-         *
-         * @type {number}
-         */
-        DEFAULT_LANGUAGE = 0,
+    var /**
+     * constant used to refer to the default language
+     *
+     * @type {number}
+     */
+    DEFAULT_LANGUAGE = 0;
 
-        /**
-         * used as counters so we can selectively call setTimeout
-         * after processing a certain number of matches/replacements
-         *
-         * @type {number}
-         */
-        match_counter = 0,
+    var /**
+     * used as counters so we can selectively call setTimeout
+     * after processing a certain number of matches/replacements
+     *
+     * @type {number}
+     */
+    match_counter = 0;
 
-        /**
-         * @type {number}
-         */
-        replacement_counter = 0,
+    var /**
+     * @type {number}
+     */
+    replacement_counter = 0;
 
-        /**
-         * @type {null|string}
-         */
-        global_class,
+    var /**
+     * @type {null|string}
+     */
+    global_class;
 
-        /**
-         * @type {null|Function}
-         */
-        onHighlight;
+    var /**
+     * @type {null|Function}
+     */
+    onHighlight;
 
     /**
      * cross browser get attribute for an element
@@ -153,8 +152,8 @@ window['Rainbow'] = (function() {
         // you can use the Google Code Prettify style: <pre class="lang-php">
         // or the HTML5 style: <pre><code class="language-php">
         if (!language) {
-            var pattern = /\blang(?:uage)?-(\w+)/,
-                match = block.className.match(pattern) || block.parentNode.className.match(pattern);
+            var pattern = /\blang(?:uage)?-(\w+)/;
+            var match = block.className.match(pattern) || block.parentNode.className.match(pattern);
 
             if (match) {
                 language = match[1];
@@ -259,8 +258,8 @@ window['Rainbow'] = (function() {
      * @returns {number}
      */
     function _indexOfGroup(match, group_number) {
-        var index = 0,
-            i;
+        var index = 0;
+        var i;
 
         for (i = 1; i < group_number; ++i) {
             if (match[i]) {
@@ -299,22 +298,22 @@ window['Rainbow'] = (function() {
             delete pattern['matches'][0];
         }
 
-        var replacement = match[0],
-            start_pos = match.index,
-            end_pos = match[0].length + start_pos,
+        var replacement = match[0];
+        var start_pos = match.index;
+        var end_pos = match[0].length + start_pos;
 
-            /**
-             * callback to process the next match of this pattern
-             */
-            processNext = function() {
-                var nextCall = function() {
-                    _processPattern(regex, pattern, code, callback);
-                };
-
-                // every 100 items we process let's call set timeout
-                // to let the ui breathe a little
-                return match_counter % 100 > 0 ? nextCall() : setTimeout(nextCall, 0);
+        var /**
+         * callback to process the next match of this pattern
+         */
+        processNext = () => {
+            var nextCall = () => {
+                _processPattern(regex, pattern, code, callback);
             };
+
+            // every 100 items we process let's call set timeout
+            // to let the ui breathe a little
+            return match_counter % 100 > 0 ? nextCall() : setTimeout(nextCall, 0);
+        };
 
         // if this is not a child match and it falls inside of another
         // match that already happened we should skip it and continue processing
@@ -328,7 +327,7 @@ window['Rainbow'] = (function() {
          * @param {string} replacement
          * @returns void
          */
-        var onMatchSuccess = function(replacement) {
+        var onMatchSuccess = replacement => {
                 // if this match has a name then wrap it in a span tag
                 if (pattern['name']) {
                     replacement = _wrapCodeInSpan(pattern['name'], replacement);
@@ -353,100 +352,100 @@ window['Rainbow'] = (function() {
 
                 // process the next match
                 processNext();
-            },
-
-            // if this pattern has sub matches for different groups in the regex
-            // then we should process them one at a time by rerunning them through
-            // this function to generate the new replacement
-            //
-            // we run through them backwards because the match position of earlier
-            // matches will not change depending on what gets replaced in later
-            // matches
-            group_keys = keys(pattern['matches']),
-
-            /**
-             * callback for processing a sub group
-             *
-             * @param {number} i
-             * @param {Array} group_keys
-             * @param {Function} callback
-             */
-            processGroup = function(i, group_keys, callback) {
-                if (i >= group_keys.length) {
-                    return callback(replacement);
-                }
-
-                var processNextGroup = function() {
-                        processGroup(++i, group_keys, callback);
-                    },
-                    block = match[group_keys[i]];
-
-                // if there is no match here then move on
-                if (!block) {
-                    return processNextGroup();
-                }
-
-                var group = pattern['matches'][group_keys[i]],
-                    language = group['language'],
-
-                    /**
-                     * process group is what group we should use to actually process
-                     * this match group
-                     *
-                     * for example if the subgroup pattern looks like this
-                     * 2: {
-                     *     'name': 'keyword',
-                     *     'pattern': /true/g
-                     * }
-                     *
-                     * then we use that as is, but if it looks like this
-                     *
-                     * 2: {
-                     *     'name': 'keyword',
-                     *     'matches': {
-                     *          'name': 'special',
-                     *          'pattern': /whatever/g
-                     *      }
-                     * }
-                     *
-                     * we treat the 'matches' part as the pattern and keep
-                     * the name around to wrap it with later
-                     */
-                    process_group = group['name'] && group['matches'] ? group['matches'] : group,
-
-                    /**
-                     * takes the code block matched at this group, replaces it
-                     * with the highlighted block, and optionally wraps it with
-                     * a span with a name
-                     *
-                     * @param {string} block
-                     * @param {string} replace_block
-                     * @param {string|null} match_name
-                     */
-                    _replaceAndContinue = function(block, replace_block, match_name) {
-                        replacement = _replaceAtPosition(_indexOfGroup(match, group_keys[i]), block, match_name ? _wrapCodeInSpan(match_name, replace_block) : replace_block, replacement);
-                        processNextGroup();
-                    };
-
-                // if this is a sublanguage go and process the block using that language
-                if (language) {
-                    return _highlightBlockForLanguage(block, language, function(code) {
-                        _replaceAndContinue(block, code);
-                    });
-                }
-
-                // if this is a string then this match is directly mapped to selector
-                // so all we have to do is wrap it in a span and continue
-                if (typeof group === 'string') {
-                    return _replaceAndContinue(block, block, group);
-                }
-
-                // the process group can be a single pattern or an array of patterns
-                // _processCodeWithPatterns always expects an array so we convert it here
-                _processCodeWithPatterns(block, process_group.length ? process_group : [process_group], function(code) {
-                    _replaceAndContinue(block, code, group['matches'] ? group['name'] : 0);
-                });
             };
+
+        var // if this pattern has sub matches for different groups in the regex
+        // then we should process them one at a time by rerunning them through
+        // this function to generate the new replacement
+        //
+        // we run through them backwards because the match position of earlier
+        // matches will not change depending on what gets replaced in later
+        // matches
+        group_keys = keys(pattern['matches']);
+
+        var /**
+         * callback for processing a sub group
+         *
+         * @param {number} i
+         * @param {Array} group_keys
+         * @param {Function} callback
+         */
+        processGroup = (i, group_keys, callback) => {
+            if (i >= group_keys.length) {
+                return callback(replacement);
+            }
+
+            var processNextGroup = () => {
+                    processGroup(++i, group_keys, callback);
+                },
+                block = match[group_keys[i]];
+
+            // if there is no match here then move on
+            if (!block) {
+                return processNextGroup();
+            }
+
+            var group = pattern['matches'][group_keys[i]],
+                language = group['language'],
+
+                /**
+                 * process group is what group we should use to actually process
+                 * this match group
+                 *
+                 * for example if the subgroup pattern looks like this
+                 * 2: {
+                 *     'name': 'keyword',
+                 *     'pattern': /true/g
+                 * }
+                 *
+                 * then we use that as is, but if it looks like this
+                 *
+                 * 2: {
+                 *     'name': 'keyword',
+                 *     'matches': {
+                 *          'name': 'special',
+                 *          'pattern': /whatever/g
+                 *      }
+                 * }
+                 *
+                 * we treat the 'matches' part as the pattern and keep
+                 * the name around to wrap it with later
+                 */
+                process_group = group['name'] && group['matches'] ? group['matches'] : group,
+
+                /**
+                 * takes the code block matched at this group, replaces it
+                 * with the highlighted block, and optionally wraps it with
+                 * a span with a name
+                 *
+                 * @param {string} block
+                 * @param {string} replace_block
+                 * @param {string|null} match_name
+                 */
+                _replaceAndContinue = (block, replace_block, match_name) => {
+                    replacement = _replaceAtPosition(_indexOfGroup(match, group_keys[i]), block, match_name ? _wrapCodeInSpan(match_name, replace_block) : replace_block, replacement);
+                    processNextGroup();
+                };
+
+            // if this is a sublanguage go and process the block using that language
+            if (language) {
+                return _highlightBlockForLanguage(block, language, code => {
+                    _replaceAndContinue(block, code);
+                });
+            }
+
+            // if this is a string then this match is directly mapped to selector
+            // so all we have to do is wrap it in a span and continue
+            if (typeof group === 'string') {
+                return _replaceAndContinue(block, block, group);
+            }
+
+            // the process group can be a single pattern or an array of patterns
+            // _processCodeWithPatterns always expects an array so we convert it here
+            _processCodeWithPatterns(block, process_group.length ? process_group : [process_group], code => {
+                _replaceAndContinue(block, code, group['matches'] ? group['name'] : 0);
+            });
+        };
 
         processGroup(0, group_keys, onMatchSuccess);
     }
@@ -469,8 +468,8 @@ window['Rainbow'] = (function() {
      * @returns {Array}
      */
     function _getPatternsForLanguage(language) {
-        var patterns = language_patterns[language] || [],
-            default_patterns = language_patterns[DEFAULT_LANGUAGE] || [];
+        var patterns = language_patterns[language] || [];
+        var default_patterns = language_patterns[DEFAULT_LANGUAGE] || [];
 
         return _bypassDefaultPatterns(language) ? patterns : patterns.concat(default_patterns);
     }
@@ -489,16 +488,16 @@ window['Rainbow'] = (function() {
         return code.substr(0, position) + sub_string.replace(replace, replace_with);
     }
 
-   /**
-     * sorts an object by index descending
-     *
-     * @param {Object} object
-     * @return {Array}
-     */
+    /**
+      * sorts an object by index descending
+      *
+      * @param {Object} object
+      * @return {Array}
+      */
     function keys(object) {
-        var locations = [],
-            replacement,
-            pos;
+        var locations = [];
+        var replacement;
+        var pos;
 
         for(var location in object) {
             if (object.hasOwnProperty(location)) {
@@ -507,9 +506,7 @@ window['Rainbow'] = (function() {
         }
 
         // numeric descending
-        return locations.sort(function(a, b) {
-            return b - a;
-        });
+        return locations.sort((a, b) => b - a);
     }
 
     /**
@@ -531,14 +528,14 @@ window['Rainbow'] = (function() {
         {
             // still have patterns to process, keep going
             if (i < patterns.length) {
-                return _processPattern(patterns[i]['pattern'], patterns[i], code, function() {
+                return _processPattern(patterns[i]['pattern'], patterns[i], code, () => {
                     _workOnPatterns(patterns, ++i);
                 });
             }
 
             // we are done processing the patterns
             // process the replacements and update the DOM
-            _processReplacements(code, function(code) {
+            _processReplacements(code, code => {
 
                 // when we are done processing replacements
                 // we are done at this level so we can go back down
@@ -573,12 +570,12 @@ window['Rainbow'] = (function() {
         function _processReplacement(code, positions, i, onComplete) {
             if (i < positions.length) {
                 ++replacement_counter;
-                var pos = positions[i],
-                    replacement = replacements[CURRENT_LEVEL][pos];
+                var pos = positions[i];
+                var replacement = replacements[CURRENT_LEVEL][pos];
                 code = _replaceAtPosition(pos, replacement['replace'], replacement['with'], code);
 
                 // process next function
-                var next = function() {
+                var next = () => {
                     _processReplacement(code, positions, ++i, onComplete);
                 };
 
@@ -615,15 +612,15 @@ window['Rainbow'] = (function() {
      */
     function _highlightCodeBlock(code_blocks, i, onComplete) {
         if (i < code_blocks.length) {
-            var block = code_blocks[i],
-                language = _getLanguageForBlock(block);
+            var block = code_blocks[i];
+            var language = _getLanguageForBlock(block);
 
             if (!_hasClass(block, 'rainbow') && language) {
                 language = language.toLowerCase();
 
                 _addClass(block, 'rainbow');
 
-                return _highlightBlockForLanguage(block.innerHTML, language, function(code) {
+                return _highlightBlockForLanguage(block.innerHTML, language, code => {
                     block.innerHTML = code;
 
                     // reset the replacement arrays
@@ -636,7 +633,7 @@ window['Rainbow'] = (function() {
                     }
 
                     // process the next block
-                    setTimeout(function() {
+                    setTimeout(() => {
                         _highlightCodeBlock(code_blocks, ++i, onComplete);
                     }, 0);
                 });
@@ -655,7 +652,6 @@ window['Rainbow'] = (function() {
      * @returns void
      */
     function _highlight(node, onComplete) {
-
         // the first argument can be an Event or a DOM Element
         // I was originally checking instanceof Event but that makes it break
         // when using mootools
@@ -664,10 +660,10 @@ window['Rainbow'] = (function() {
         //
         node = node && typeof node.getElementsByTagName == 'function' ? node : document;
 
-        var pre_blocks = node.getElementsByTagName('pre'),
-            code_blocks = node.getElementsByTagName('code'),
-            i,
-            final_blocks = [];
+        var pre_blocks = node.getElementsByTagName('pre');
+        var code_blocks = node.getElementsByTagName('code');
+        var i;
+        var final_blocks = [];
 
         // @see http://stackoverflow.com/questions/2735067/how-to-convert-a-dom-node-list-to-an-array-in-javascript
         // we are going to process all <code> blocks
@@ -699,7 +695,7 @@ window['Rainbow'] = (function() {
          * @param {*} patterns      array of patterns to add on
          * @param {boolean|null} bypass      if true this will bypass the default language patterns
          */
-        extend: function(language, patterns, bypass) {
+        extend(language, patterns, bypass) {
 
             // if there is only one argument then we assume that we want to
             // extend the default language rules
@@ -717,7 +713,7 @@ window['Rainbow'] = (function() {
          *
          * @param {Function} callback
          */
-        onHighlight: function(callback) {
+        onHighlight(callback) {
             onHighlight = callback;
         },
 
@@ -726,7 +722,7 @@ window['Rainbow'] = (function() {
          *
          * @param {string} class_name
          */
-        addClass: function(class_name) {
+        addClass(class_name) {
             global_class = class_name;
         },
 
@@ -735,36 +731,36 @@ window['Rainbow'] = (function() {
          *
          * @returns void
          */
-        color: function() {
+        color(...args) {
 
             // if you want to straight up highlight a string you can pass the string of code,
             // the language, and a callback function
-            if (typeof arguments[0] == 'string') {
-                return _highlightBlockForLanguage(arguments[0], arguments[1], arguments[2]);
+            if (typeof args[0] == 'string') {
+                return _highlightBlockForLanguage(args[0], args[1], args[2]);
             }
 
             // if you pass a callback function then we rerun the color function
             // on all the code and call the callback function on complete
-            if (typeof arguments[0] == 'function') {
-                return _highlight(0, arguments[0]);
+            if (typeof args[0] == 'function') {
+                return _highlight(0, args[0]);
             }
 
             // otherwise we use whatever node you passed in with an optional
             // callback function as the second parameter
-            _highlight(arguments[0], arguments[1]);
+            _highlight(args[0], args[1]);
         }
     };
-}) ();
+})) ();
 
 /**
  * adds event listener to start highlighting
  */
-(function() {
+((() => {
     if (window.addEventListener) {
         return window.addEventListener('load', Rainbow.color, false);
     }
     window.attachEvent('onload', Rainbow.color);
-}) ();
+})) ();
 
 // When using Google closure compiler in advanced mode some methods
 // get renamed.  This keeps a public reference to these methods so they can
